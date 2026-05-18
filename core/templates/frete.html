@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Frete | Precifica{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex align-items-center gap-3 mb-4">
+  <img class="page-feature-icon" src="{% static 'img/frete.png' %}" alt="" aria-hidden="true">
+  <div>
+    <div class="badge bg-secondary mb-2">Somente leitura</div>
+    <h1 class="h3 fw-bold mb-1">Frete</h1>
+    <p class="text-muted mb-0">Modulo disponivel para consulta, sem edicao nesta versao.</p>
+  </div>
+</div>
+
+<div class="card shadow-sm readonly-panel">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label" for="origem">Origem</label>
+        <input class="form-control" id="origem" type="text" value="Configuracao pendente" readonly>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="destino">Destino</label>
+        <input class="form-control" id="destino" type="text" value="Configuracao pendente" readonly>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="valor-frete">Valor do frete</label>
+        <input class="form-control" id="valor-frete" type="text" value="R$ 0,00" readonly>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

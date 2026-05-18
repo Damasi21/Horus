@@ -1,0 +1,38 @@
+.card-menu {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 8px;
+  color: #111827;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.card-menu:hover,
+.card-menu:focus-visible {
+  border-color: rgba(13, 110, 253, 0.38);
+  box-shadow: 0 0.75rem 1.5rem rgba(17, 24, 39, 0.08) !important;
+  transform: translateY(-2px);
+}
+
+.card-menu-readonly {
+  background: #f8f9fa;
+}
+
+.menu-feature-icon,
+.page-feature-icon {
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.menu-feature-icon {
+  width: 56px;
+  height: 56px;
+}
+
+.page-feature-icon {
+  width: 64px;
+  height: 64px;
+}
+
+.readonly-panel input[readonly] {
+  background-color: #f8f9fa;
+  color: #6c757d;
+}
