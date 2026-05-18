@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Menu | Precifica{% endblock %}
+
+{% block content %}
+<div class="p-4 p-md-5 bg-light rounded-4 shadow-sm">
+  <h1 class="h3 fw-bold mb-2">Menu</h1>
+  <p class="text-muted mb-4">Escolha uma opção para começar.</p>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <a class="card card-menu shadow-sm h-100 text-decoration-none" href="{% url 'core:precificacao' %}">
+        <div class="card-body">
+          <div class="badge bg-primary mb-2">Principal</div>
+          <h2 class="h5 mb-1">Precificação</h2>
+          <p class="text-muted mb-0">Simular custo, margem e viabilidade.</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a class="card card-menu shadow-sm h-100 text-decoration-none" href="{% url 'core:frete' %}">
+        <div class="card-body">
+          <div class="badge bg-secondary mb-2">Futuro</div>
+          <h2 class="h5 mb-1">Frete</h2>
+          <p class="text-muted mb-0">Regras e cálculo de logística.</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a class="card card-menu shadow-sm h-100 text-decoration-none" href="{% url 'core:producao' %}">
+        <div class="card-body">
+          <div class="badge bg-secondary mb-2">Futuro</div>
+          <h2 class="h5 mb-1">Produção</h2>
+          <p class="text-muted mb-0">Lançamentos e acompanhamento.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}  

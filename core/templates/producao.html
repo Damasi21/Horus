@@ -1,0 +1,114 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Produção | Precifica{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm rounded-4">
+  <div class="card-body p-4">
+
+    <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
+      <div>
+        <h1 class="h5 fw-bold mb-1">Produção / Expedição</h1>
+        <p class="text-muted mb-0">
+          Pedidos do OMIE da etapa 60, filtrados por previsão de faturamento.
+        </p>
+      </div>
+    </div>
+
+    <form method="get" class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <label class="form-label">De (previsão)</label>
+            <input
+            type="date"
+            name="data_inicial"
+            class="form-control"
+            value="{{ data_inicial }}"
+            >
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Até (previsão)</label>
+            <input
+            type="date"
+            name="data_final"
+            class="form-control"
+            value="{{ data_final }}"
+            >
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+            Buscar Pedidos
+            </button>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <a href="{% url 'core:producao' %}" class="btn btn-outline-secondary w-100">
+            Limpar Filtro
+            </a>
+        </div>
+
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Pedido</th>
+            <th>Cliente</th>
+            <th>Previsão</th>
+            <th>Volume</th>
+            <th>Status</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pedidos %}
+          <tr class="{% if p.ordem_gerada %}table-success{% endif %}">
+            <td>{{ p.numero_pedido }}</td>
+            <td>{{ p.cliente|default:"—" }}</td>
+            <td>
+              {% if p.data_previsao %}
+                {{ p.data_previsao|date:"d/m/Y" }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>{{ p.volume_total }} m³</td>
+
+            <td>
+              {% if p.ordem_gerada %}
+                <span class="badge bg-success">Ordem gerada</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Pendente</span>
+              {% endif %}
+            </td>
+
+            <td class="text-end">
+              {% if not p.ordem_gerada %}
+                <button type="button" class="btn btn-sm btn-success">
+                  Gerar Ordem
+                </button>
+              {% else %}
+                <button type="button" class="btn btn-sm btn-secondary" disabled>
+                  Gerado
+                </button>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+              Nenhum pedido encontrado{% if data_previsao %} para a data informada{% endif %}.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

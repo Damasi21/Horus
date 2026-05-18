@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Regras | Configurações{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm rounded-4">
+  <div class="card-body p-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h1 class="h5 fw-bold mb-0">Regras de Resultado</h1>
+      <button class="btn btn-primary" type="button" id="btnNovaRegra">
+        Nova regra
+      </button>
+    </div>
+
+    <p class="text-muted mb-4">
+      Defina aqui os intervalos que serão usados para classificar o resultado da precificação.
+    </p>
+
+    <div class="row g-3 align-items-end mb-4">
+      <div class="col-md-3">
+        <label class="form-label">De valor</label>
+        <input type="text" class="form-control form-control-sm" id="valorInicial" placeholder="Ex: -99999">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Até valor</label>
+        <input type="text" class="form-control form-control-sm" id="valorFinal" placeholder="Ex: 0">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Resultado</label>
+        <select class="form-select form-select-sm" id="resultadoRegra">
+          <option value="">Selecione...</option>
+          <option value="prejuizo">🔴 PREJUÍZO OPERACIONAL</option>
+          <option value="abaixo_meta">🟡 ABAIXO DA META</option>
+          <option value="saudavel">🟢 SAUDÁVEL</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <button class="btn btn-success btn-sm w-100" type="button" id="btnSalvarRegra">
+          Salvar
+        </button>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <h2 class="h6 fw-bold mb-3">Regras cadastradas</h2>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>De valor</th>
+            <th>Até valor</th>
+            <th>Resultado</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyRegras">
+          <tr class="text-muted">
+            <td colspan="4">Nenhuma regra cadastrada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <a class="btn btn-outline-secondary" href="{% url 'core:index' %}">
+        Voltar
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/regras.js' %}"></script>
+{% endblock %}

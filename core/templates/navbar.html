@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="{% url 'core:index' %}">PRECIFICA</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'core:precificacao' %}">Precificação</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'core:frete' %}">Frete</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'core:producao' %}">Produção</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Configurações
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{% url 'core:configuracoes' %}">Cenários</a></li>
+            <li><a class="dropdown-item" href="{% url 'core:regras' %}">Regras</a></li>
+            <li><a class="dropdown-item" href="{% url 'core:produtos' %}">Produtos</a></li>
+            <li><a class="dropdown-item" href="{% url 'core:estados' %}">Estados</a></li>
+          </ul>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>

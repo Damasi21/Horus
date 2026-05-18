@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Estados | Configurações{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm rounded-4">
+  <div class="card-body p-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h1 class="h5 fw-bold mb-0">Configuração de Estados</h1>
+    </div>
+
+    <p class="text-muted mb-4">
+      Clique em um estado para definir os percentuais de DIFAL e ICMS.
+    </p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} py-2" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="row g-2 mb-4" id="gradeEstados">
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="AC">AC</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="AL">AL</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="AP">AP</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="AM">AM</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="BA">BA</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="CE">CE</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="DF">DF</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="ES">ES</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="GO">GO</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="MA">MA</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="MT">MT</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="MS">MS</button></div>
+
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="MG">MG</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="PA">PA</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="PB">PB</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="PR">PR</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="PE">PE</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="PI">PI</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="RJ">RJ</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="RN">RN</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="RS">RS</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="RO">RO</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="RR">RR</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="SC">SC</button></div>
+
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="SP">SP</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="SE">SE</button></div>
+      <div class="col-4 col-sm-3 col-md-2 col-lg-1"><button class="btn btn-outline-primary w-100 estado-btn" type="button" data-uf="TO">TO</button></div>
+    </div>
+
+    <div class="card border-0 bg-light" id="painelEstado" style="display: none;">
+      <div class="card-body">
+        <h2 class="h6 fw-bold mb-3">
+          Configuração do estado: <span id="estadoSelecionado">--</span>
+        </h2>
+
+        <form method="post" class="row g-3 align-items-end">
+          {% csrf_token %}
+          <input type="hidden" name="uf" id="ufEstado">
+
+          <div class="col-md-3" id="campoDifal">
+            <label class="form-label">DIFAL (%)</label>
+            <input type="text" class="form-control form-control-sm percentual" id="difalEstado" name="difal" placeholder="0,00">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">ICMS (%)</label>
+            <input type="text" class="form-control form-control-sm percentual" id="icmsEstado" name="icms" placeholder="0,00" required>
+          </div>
+
+          <div class="col-md-3">
+            <button class="btn btn-success btn-sm w-100" type="submit" id="btnSalvarEstado">
+              Salvar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <a class="btn btn-outline-secondary" href="{% url 'core:index' %}">
+        Voltar
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ configuracoes_estados|json_script:"configuracoes-estados" }}
+<script src="{% static 'js/estados.js' %}?v=20260415-2"></script>
+{% endblock %}

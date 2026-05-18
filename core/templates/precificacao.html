@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Precificacao | Precifica{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-2 px-md-3">
+  <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-4">
+    <h1 class="fw-bold text-uppercase mb-0 text-center text-lg-start">Precificador</h1>
+
+    <div class="row g-2 align-items-end justify-content-lg-end">
+      <div class="col-sm-4 col-lg-auto">
+        <label class="form-label small mb-1">Frete</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text px-1">R$</span>
+          <input type="text" class="form-control px-1" id="frete" value="0,00" placeholder="0,00">
+        </div>
+      </div>
+
+      <div class="col-sm-4 col-lg-auto">
+        <label class="form-label small mb-1">Cenario</label>
+        <select class="form-select form-select-sm" id="cenarioSelect">
+          <option value="">Selecione...</option>
+          {% for cenario in cenarios %}
+            <option
+              value="{{ cenario.id }}"
+              data-contribuinte="{% if cenario.contribuinte %}sim{% else %}nao{% endif %}"
+              data-provisao-gastos-fixos="{{ cenario.provisao_gastos_fixos_formatado }}"
+              data-total-custos-provisoes="{{ cenario.total_custos_provisoes_formatado }}"
+            >
+              {{ cenario.nome }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-sm-4 col-lg-auto">
+        <label class="form-label small mb-1">% Provis. Gastos Fixos</label>
+        <input type="text" class="form-control form-control-sm" id="provisaoGastosFixos" value="0,00" placeholder="0,00">
+      </div>
+
+      <div class="col-sm-4 col-lg-auto">
+        <label class="form-label small mb-1">Estado</label>
+        <select class="form-select form-select-sm" id="estadoSelect">
+          <option value="">Selecione...</option>
+          {% for estado in estados %}
+            <option
+              value="{{ estado.id }}"
+              data-icms="{{ estado.icms_formatado }}"
+              data-difal="{{ estado.difal_formatado|default:'0,00' }}"
+            >
+              {{ estado.uf }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="border rounded bg-light p-3 mb-4">
+    <div class="mb-3">
+      <span class="fw-bold text-uppercase small">Produtos</span>
+    </div>
+
+    <div id="linhasProdutos" class="vstack gap-2">
+      <div class="row g-2 align-items-end linha-produto">
+        <div class="col-lg-4 col-md-6">
+          <label class="form-label small mb-1">Produto</label>
+          <select class="form-select form-select-sm produto-select">
+            <option value="">Selecione...</option>
+            {% for produto in produtos %}
+              <option value="{{ produto.id }}" data-custo="{{ produto.custo_formatado }}" data-valor-venda="{{ produto.valor_venda_formatado }}">
+                {{ produto.codigo }} - {{ produto.nome }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-lg-1 col-md-3">
+          <label class="form-label small mb-1">Custo</label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text px-1">R$</span>
+            <input type="text" class="form-control px-1 custo-produto" value="0,00" readonly>
+          </div>
+        </div>
+
+        <div class="col-lg-1 col-md-3">
+          <label class="form-label small mb-1">Quantidade</label>
+          <input type="text" class="form-control form-control-sm quantidade-produto" placeholder="0,00">
+        </div>
+
+        <div class="col-lg-1 col-md-4">
+          <label class="form-label small mb-1">Venda</label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text px-1">R$</span>
+            <input type="text" class="form-control px-1 valor-venda-produto" value="0,00">
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4">
+          <label class="form-label small mb-1">Subtotal</label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text px-1">R$</span>
+            <input type="text" class="form-control px-1 subtotal-produto" value="0,00" readonly>
+          </div>
+        </div>
+
+        <div class="col-lg-1 col-md-2">
+          <label class="form-label small mb-1">&nbsp;</label>
+          <button class="btn btn-outline-danger btn-sm w-100 px-1 remover-linha-produto" type="button">x</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-column flex-sm-row align-items-sm-end justify-content-between gap-3 mt-3">
+      <button class="btn btn-outline-primary btn-sm" id="btnAdicionarProduto" type="button">+</button>
+
+      <div class="text-sm-end ms-sm-auto">
+        <div class="small text-muted">Valor Total</div>
+        <div class="h5 fw-bold mb-0" id="valorTotalProdutos">R$ 0,00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mb-4">
+    <button class="btn btn-primary px-4 me-2" id="btnCalcular" type="button">CALCULAR</button>
+    <button class="btn btn-secondary px-4" id="btnLimpar" type="button">LIMPAR</button>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="h6 fw-bold mb-3">Resultado</h2>
+
+      <div class="text-center mb-4">
+        <div id="semaforoBox"
+            class="border rounded p-4 bg-white shadow-sm"
+            style="max-width: 520px; margin: 0 auto;">
+
+          <div class="small text-muted mb-2">Status da Operacao</div>
+
+          <div id="statusSemaforo"
+              class="fw-bold"
+              style="font-size: 1.6rem;">
+            - AGUARDANDO CALCULO -
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="border rounded p-2 bg-light">
+            <div class="small text-muted">Margem Bruta</div>
+            <div class="fw-bold" id="resMargemBruta">-</div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="border rounded p-2 bg-light">
+            <div class="small text-muted">Margem de Contribui&ccedil;&atilde;o</div>
+            <div class="fw-bold" id="resMargemContribuicao">-</div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="border rounded p-2 bg-light">
+            <div class="small text-muted">Lucro L&iacute;quido</div>
+            <div class="fw-bold" id="resLucroLiquido">-</div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="border rounded p-2 bg-light">
+            <div class="small text-muted">Markup</div>
+            <div class="fw-bold" id="resMarkup">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/preco.js' %}?v=20260505-5"></script>
+{% endblock %}

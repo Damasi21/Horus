@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Produtos | Configurações{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm rounded-4">
+  <div class="card-body p-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h1 class="h5 fw-bold mb-0">Cadastro de Produtos</h1>
+      <a class="btn btn-primary" href="{% url 'core:produtos' %}" id="btnNovoProduto">
+        Novo produto
+      </a>
+    </div>
+
+    <p class="text-muted mb-4">
+      Cadastre os produtos que serão utilizados na precificação.
+    </p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} py-2" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" class="row g-3 align-items-end mb-4">
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="salvar">
+      <input type="hidden" name="produto_id" value="{{ produto_em_edicao.id|default:'' }}">
+
+      <div class="col-md-2">
+        <label class="form-label">Código</label>
+        <input type="text" class="form-control form-control-sm" id="codigoProduto" name="codigo" value="{{ produto_em_edicao.codigo|default:'' }}" placeholder="Ex: 001" required>
+      </div>
+
+      <div class="col-md-5">
+        <label class="form-label">Nome do produto</label>
+        <input type="text" class="form-control form-control-sm" id="nomeProduto" name="nome" value="{{ produto_em_edicao.nome|default:'' }}" placeholder="Ex: Macrofibra PP 4kg" required>
+      </div>
+
+      
+      <div class="col-md-3">
+        <label class="form-label">Custo do produto</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">R$</span>
+          <input type="text" class="form-control money" id="custoProduto" name="custo" value="{{ produto_em_edicao.custo_formatado|default:'' }}" placeholder="0,00" required>
+        </div>
+      </div>
+            
+      <div class="col-md-2">
+        <label class="form-label">Valor de venda</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">R$</span>
+          <input type="text" class="form-control money" id="valorVendaProduto" name="valor_venda" value="{{ produto_em_edicao.valor_venda_formatado|default:'' }}" placeholder="0,00" required>
+        </div>
+      </div>
+
+      <div class="col-md-1">
+        <button class="btn btn-success btn-sm w-100" type="submit" id="btnSalvarProduto">
+          {% if produto_em_edicao %}Atualizar{% else %}Salvar{% endif %}
+        </button>
+      </div>
+    </form>
+
+    <hr class="my-4">
+
+    <h2 class="h6 fw-bold mb-3">Produtos cadastrados</h2>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Produto</th>
+            <th>Custo</th>
+            <th>Valor de venda</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyProdutos">
+          {% for produto in produtos %}
+            <tr>
+              <td>{{ produto.codigo }}</td>
+              <td>{{ produto.nome }}</td>
+              <td>R$ {{ produto.custo_formatado }}</td>
+              <td>R$ {{ produto.valor_venda_formatado }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary me-1" href="{% url 'core:produtos' %}?editar={{ produto.id }}">Editar</a>
+                <form method="post" class="d-inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="acao" value="excluir">
+                  <input type="hidden" name="produto_id" value="{{ produto.id }}">
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr class="text-muted">
+              <td colspan="5">Nenhum produto cadastrado.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <a class="btn btn-outline-secondary" href="{% url 'core:index' %}">
+        Voltar
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/produtos.js' %}"></script>
+{% endblock %}

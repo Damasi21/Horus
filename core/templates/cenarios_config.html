@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cenarios | Configuracoes{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm rounded-4">
+  <div class="card-body p-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h1 class="h5 fw-bold mb-0">Cenarios de Configuracao</h1>
+      <a class="btn btn-primary" href="{% url 'core:configuracoes' %}" id="btnNovoCenario">
+        Novo cenario
+      </a>
+    </div>
+
+    <p class="text-muted mb-4">
+      Defina os parametros fiscais, custos e provisoes que serao utilizados nos calculos da precificacao.
+    </p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} py-2" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="salvar">
+      <input type="hidden" name="cenario_id" value="{{ cenario_em_edicao.id|default:'' }}">
+
+      <div class="col-md-4">
+        <label class="form-label">Nome do cenario</label>
+        <input type="text" class="form-control form-control-sm" id="nomeCenario" name="nome" value="{{ cenario_em_edicao.nome|default:'' }}" placeholder="Ex: Cenario padrao" required>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Contribuinte?</label>
+        <select class="form-select form-select-sm" name="contribuinte" required>
+          <option value="sim" {% if cenario_em_edicao.contribuinte %}selected{% endif %}>Sim</option>
+          <option value="nao" {% if cenario_em_edicao and not cenario_em_edicao.contribuinte %}selected{% endif %}>Nao</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">% PIS</label>
+        <input type="text" class="form-control form-control-sm percentual" name="pis" value="{{ cenario_em_edicao.pis_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">% COFINS</label>
+        <input type="text" class="form-control form-control-sm percentual" name="cofins" value="{{ cenario_em_edicao.cofins_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">% IRPJ</label>
+        <input type="text" class="form-control form-control-sm percentual" name="irpj" value="{{ cenario_em_edicao.irpj_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">% CSLL</label>
+        <input type="text" class="form-control form-control-sm percentual" name="csll" value="{{ cenario_em_edicao.csll_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">% IPI</label>
+        <input type="text" class="form-control form-control-sm percentual" name="ipi" value="{{ cenario_em_edicao.ipi_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Comissoes</label>
+        <input type="text" class="form-control form-control-sm percentual custo-provisao" name="comissoes" value="{{ cenario_em_edicao.comissoes_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">% Projetos</label>
+        <input type="text" class="form-control form-control-sm percentual custo-provisao" name="projetos" value="{{ cenario_em_edicao.projetos_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">% Construtor</label>
+        <input type="text" class="form-control form-control-sm percentual custo-provisao" name="construtor" value="{{ cenario_em_edicao.construtor_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">% Outros custos e provisoes</label>
+        <input type="text" class="form-control form-control-sm percentual custo-provisao" name="outros_custos_provisoes" value="{{ cenario_em_edicao.outros_custos_provisoes_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">% Provis. Gastos Fixos</label>
+        <input type="text" class="form-control form-control-sm percentual custo-provisao" name="provisao_gastos_fixos" value="{{ cenario_em_edicao.provisao_gastos_fixos_formatado|default:'0,00' }}" placeholder="0,00">
+        <div class="form-text">Marg. Contrib.</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">% Margem de lucro desejada e possivel</label>
+        <input type="text" class="form-control form-control-sm percentual" name="margem_lucro_desejada" value="{{ cenario_em_edicao.margem_lucro_desejada_formatado|default:'0,00' }}" placeholder="0,00">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Total de custos e provisoes</label>
+        <input type="text" class="form-control form-control-sm" id="totalCustosProvisoes" name="total_custos_provisoes" value="{{ cenario_em_edicao.total_custos_provisoes_formatado|default:'0,00' }}" placeholder="0,00" readonly>
+      </div>
+
+      <div class="col-12 mt-3">
+        <button class="btn btn-success" type="submit" id="btnSalvarCenario">
+          {% if cenario_em_edicao %}Atualizar{% else %}Salvar{% endif %}
+        </button>
+
+        <a class="btn btn-outline-secondary" href="{% url 'core:index' %}">
+          Voltar
+        </a>
+      </div>
+    </form>
+
+    <hr class="my-4">
+
+    <h2 class="h6 fw-bold mb-3">Cenarios cadastrados</h2>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Nome do cenario</th>
+            <th>Contribuinte</th>
+            <th>PIS</th>
+            <th>COFINS</th>
+            <th>IRPJ</th>
+            <th>CSLL</th>
+            <th>IPI</th>
+            <th>Total custos/provisoes</th>
+            <th class="text-end">Acoes</th>
+          </tr>
+        </thead>
+
+        <tbody id="tbodyCenarios">
+          {% for cenario in cenarios %}
+            <tr>
+              <td>{{ cenario.nome }}</td>
+              <td>{{ cenario.contribuinte_formatado }}</td>
+              <td>{{ cenario.pis_formatado }}%</td>
+              <td>{{ cenario.cofins_formatado }}%</td>
+              <td>{{ cenario.irpj_formatado }}%</td>
+              <td>{{ cenario.csll_formatado }}%</td>
+              <td>{{ cenario.ipi_formatado }}%</td>
+              <td>{{ cenario.total_custos_provisoes_formatado }}%</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary me-1" href="{% url 'core:configuracoes' %}?editar={{ cenario.id }}">Editar</a>
+                <form method="post" class="d-inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="acao" value="excluir">
+                  <input type="hidden" name="cenario_id" value="{{ cenario.id }}">
+                  <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr class="text-muted">
+              <td colspan="9">Nenhum cenario cadastrado.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/configuracoes.js' %}?v=20260415-2"></script>
+{% endblock %}
