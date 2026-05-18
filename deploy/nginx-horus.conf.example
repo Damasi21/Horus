@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name horus;
+    server_name horus.md21.online;
 
     location /static/ {
         alias /var/www/horus/staticfiles/;
