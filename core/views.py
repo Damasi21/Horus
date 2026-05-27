@@ -1,10 +1,13 @@
+from datetime import date
 from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Cenario, EstadoAliquota, PedidoProducao, Produto
+from .services.ofx_converter import ConversorOFXError, extrair_lancamentos_bradesco, gerar_ofx
 
 ETAPA_PRODUCAO = "60"
 UFS_BRASIL = [
@@ -210,6 +213,43 @@ def estados(request):
         "configuracoes_estados": configuracoes,
     }
     return render(request, "estados.html", context)
+
+
+def conversor(request):
+    context = {
+        "ano_padrao": date.today().year,
+        "banco_padrao": "0237",
+        "conta_padrao": "CARTAO-BRADESCO",
+    }
+
+    if request.method != "POST":
+        return render(request, "conversor.html", context)
+
+    arquivo = request.FILES.get("arquivo_html")
+    ano = request.POST.get("ano", "").strip()
+    banco_id = request.POST.get("banco_id", "0237").strip() or "0237"
+    conta_id = request.POST.get("conta_id", "CARTAO-BRADESCO").strip() or "CARTAO-BRADESCO"
+
+    if not arquivo:
+        messages.error(request, "Selecione o arquivo HTML da fatura.")
+        return render(request, "conversor.html", context)
+
+    if not ano.isdigit() or len(ano) != 4:
+        messages.error(request, "Informe o ano dos lancamentos com 4 digitos.")
+        return render(request, "conversor.html", context)
+
+    try:
+        lancamentos = extrair_lancamentos_bradesco(arquivo.read(), int(ano))
+        conteudo_ofx = gerar_ofx(lancamentos, banco_id=banco_id, conta_id=conta_id)
+    except (ConversorOFXError, InvalidOperation) as exc:
+        messages.error(request, str(exc))
+        return render(request, "conversor.html", context)
+
+    nome_download = f"cartao-bradesco-{ano}.ofx"
+    response = HttpResponse(conteudo_ofx, content_type="application/x-ofx")
+    response["Content-Disposition"] = f'attachment; filename="{nome_download}"'
+    return response
+
 
 #----------------------------------------------------------------------------
 

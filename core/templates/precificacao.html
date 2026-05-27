@@ -128,51 +128,59 @@
 
   <div class="card shadow-sm">
     <div class="card-body">
-      <h2 class="h6 fw-bold mb-3">Resultado</h2>
+      <h2 class="h6 fw-bold mb-2">Resultado</h2>
 
-      <div class="text-center mb-4">
+      <div class="text-center mb-3">
         <div id="semaforoBox"
-            class="border rounded p-4 bg-white shadow-sm"
-            style="max-width: 520px; margin: 0 auto;">
+            class="border rounded p-3 bg-white shadow-sm"
+            style="max-width: 420px; margin: 0 auto;">
 
-          <div class="small text-muted mb-2">Status da Operacao</div>
+          <div class="small text-muted mb-1">Status da Operacao</div>
 
           <div id="statusSemaforo"
               class="fw-bold"
-              style="font-size: 1.6rem;">
+              style="font-size: 1.15rem;">
             - AGUARDANDO CALCULO -
           </div>
         </div>
       </div>
 
-      <div class="row g-3">
-        <div class="col-md-3">
-          <div class="border rounded p-2 bg-light">
-            <div class="small text-muted">Margem Bruta</div>
-            <div class="fw-bold" id="resMargemBruta">-</div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="border rounded p-2 bg-light">
-            <div class="small text-muted">Margem de Contribui&ccedil;&atilde;o</div>
-            <div class="fw-bold" id="resMargemContribuicao">-</div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="border rounded p-2 bg-light">
-            <div class="small text-muted">Lucro L&iacute;quido</div>
-            <div class="fw-bold" id="resLucroLiquido">-</div>
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <div class="border rounded p-2 bg-light">
-            <div class="small text-muted">Markup</div>
-            <div class="fw-bold" id="resMarkup">-</div>
-          </div>
-        </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle text-center mb-0 tabela-simulacao-markup">
+          <thead>
+            <tr>
+              <th colspan="7" class="titulo-simulacao">
+                SIMULA&Ccedil;&Atilde;O DE MARK-UP, PRE&Ccedil;OS DE VENDA, MARGEM E LUCRO
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <div class="d-flex align-items-center justify-content-center gap-1">
+                  <span>Markup</span>
+                  <select class="form-select form-select-sm select-passo-markup" id="passoMarkupSelect" aria-label="Passo do markup">
+                    <option value="0.2">0,2</option>
+                    <option value="0.5">0,5</option>
+                    <option value="1">1,00</option>
+                    <option value="1.5">1,50</option>
+                    <option value="2">2,00</option>
+                    <option value="2.5">2,50</option>
+                  </select>
+                </div>
+              </th>
+              <th>Pr.Venda Sugerido</th>
+              <th>% Margem Bruta</th>
+              <th>% Margem de Contribui&ccedil;&atilde;o</th>
+              <th>$ Margem de Contribui&ccedil;&atilde;o</th>
+              <th>% Lucro L&iacute;quido</th>
+              <th>$ Lucro L&iacute;quido</th>
+            </tr>
+          </thead>
+          <tbody id="linhasSimulacaoMarkup">
+            <tr>
+              <td colspan="7" class="text-muted py-3">- AGUARDANDO CALCULO -</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -180,5 +188,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/preco.js' %}?v=20260505-5"></script>
+<script src="{% static 'js/preco.js' %}?v=20260519-2"></script>
 {% endblock %}

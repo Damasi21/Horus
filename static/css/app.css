@@ -36,3 +36,44 @@
   background-color: #f8f9fa;
   color: #6c757d;
 }
+
+.tabela-simulacao-markup {
+  min-width: 860px;
+  font-size: 0.82rem;
+}
+
+.tabela-simulacao-markup th,
+.tabela-simulacao-markup td {
+  padding: 0.22rem 0.35rem;
+  white-space: nowrap;
+}
+
+.tabela-simulacao-markup .titulo-simulacao {
+  background: #c9000b;
+  color: #fff;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+}
+
+.tabela-simulacao-markup thead tr:last-child th {
+  background: #fff;
+  color: #111827;
+  font-weight: 700;
+}
+
+.tabela-simulacao-markup .select-passo-markup {
+  width: 74px;
+  min-height: 24px;
+  padding-top: 0.05rem;
+  padding-bottom: 0.05rem;
+  font-size: 0.76rem;
+}
+
+.tabela-simulacao-markup .linha-prejuizo td {
+  background: #f0806f;
+  color: #a30000;
+}
+
+.tabela-simulacao-markup .linha-equilibrio td {
+  background: #bff5ef;
+}

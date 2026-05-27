@@ -32,6 +32,9 @@
   const provisaoGastosFixosInput = document.getElementById("provisaoGastosFixos");
   const estadoSelect = document.getElementById("estadoSelect");
   const valorTotalProdutos = document.getElementById("valorTotalProdutos");
+  const linhasSimulacaoMarkup = document.getElementById("linhasSimulacaoMarkup");
+  const passoMarkupSelect = document.getElementById("passoMarkupSelect");
+  let ultimaSimulacaoMarkup = null;
 
   if (!btnCalcular) return;
 
@@ -96,6 +99,95 @@
     return total;
   }
 
+  function fmtPercentual(n) {
+    return n.toFixed(1).replace(".", ",") + "%";
+  }
+
+  function criarCelula(texto) {
+    const td = document.createElement("td");
+    td.textContent = texto;
+    return td;
+  }
+
+  function limparSimulacaoMarkup() {
+    if (!linhasSimulacaoMarkup) return;
+
+    linhasSimulacaoMarkup.innerHTML = "";
+    const linha = document.createElement("tr");
+    const celula = document.createElement("td");
+    celula.colSpan = 7;
+    celula.className = "text-muted py-3";
+    celula.textContent = "- AGUARDANDO CALCULO -";
+    linha.appendChild(celula);
+    linhasSimulacaoMarkup.appendChild(linha);
+  }
+
+  function adicionarLinhaSimulacao(dados) {
+    if (!linhasSimulacaoMarkup) return;
+
+    const linha = document.createElement("tr");
+
+    if (dados.lucroLiquidoPercentual < 0) {
+      linha.classList.add("linha-prejuizo");
+    } else if (dados.lucroLiquidoPercentual < 10) {
+      linha.classList.add("linha-equilibrio");
+    }
+
+    [
+      dados.markup.toFixed(3).replace(".", ","),
+      fmtBRL(dados.precoVenda),
+      fmtPercentual(dados.margemBruta),
+      fmtPercentual(dados.margemContribuicao),
+      fmtBRL(dados.margemContribuicaoValor),
+      fmtPercentual(dados.lucroLiquidoPercentual),
+      fmtBRL(dados.lucroLiquidoValor)
+    ].forEach(valor => linha.appendChild(criarCelula(valor)));
+
+    linhasSimulacaoMarkup.appendChild(linha);
+  }
+
+  function calcularMargemBruta(valorBrutoVendas, totalCustosProvisoes, provisaoGastosFixos) {
+    const custosSemProvisaoFixa = Math.max(totalCustosProvisoes - provisaoGastosFixos, 0);
+    const receitaLiquida = valorBrutoVendas / (1 + (custosSemProvisaoFixa / 100));
+
+    return receitaLiquida > 0
+      ? (valorBrutoVendas / receitaLiquida) * 100
+      : 0;
+  }
+
+  function atualizarSimulacaoMarkup(custoProduto, totalCustosProvisoes, provisaoGastosFixos) {
+    if (!linhasSimulacaoMarkup) return;
+
+    linhasSimulacaoMarkup.innerHTML = "";
+    ultimaSimulacaoMarkup = { custoProduto, totalCustosProvisoes, provisaoGastosFixos };
+
+    if (custoProduto <= 0 || totalCustosProvisoes >= 100) {
+      limparSimulacaoMarkup();
+      return;
+    }
+
+    const markupContribuicaoZero = 100 / (100 - totalCustosProvisoes);
+    const passoMarkup = Number(passoMarkupSelect?.value || 0.2);
+    const markups = Array.from({ length: 6 }, (_, index) => markupContribuicaoZero + (passoMarkup * index));
+
+    markups.forEach(markup => {
+      const precoVenda = custoProduto * markup;
+      const margemBruta = calcularMargemBruta(precoVenda, totalCustosProvisoes, provisaoGastosFixos);
+      const margemContribuicao = margemBruta - totalCustosProvisoes;
+      const lucroLiquidoPercentual = margemContribuicao - provisaoGastosFixos;
+
+      adicionarLinhaSimulacao({
+        markup,
+        precoVenda,
+        margemBruta,
+        margemContribuicao,
+        margemContribuicaoValor: precoVenda * (margemContribuicao / 100),
+        lucroLiquidoPercentual,
+        lucroLiquidoValor: precoVenda * (lucroLiquidoPercentual / 100)
+      });
+    });
+  }
+
   function prepararLinhaProduto(linha) {
     const produtoSelect = linha.querySelector(".produto-select");
     const quantidadeInput = linha.querySelector(".quantidade-produto");
@@ -121,6 +213,16 @@
   cenarioSelect?.addEventListener("change", function () {
     const opcao = this.selectedOptions[0];
     provisaoGastosFixosInput.value = opcao?.dataset.provisaoGastosFixos || "0,00";
+  });
+
+  passoMarkupSelect?.addEventListener("change", function () {
+    if (!ultimaSimulacaoMarkup) return;
+
+    atualizarSimulacaoMarkup(
+      ultimaSimulacaoMarkup.custoProduto,
+      ultimaSimulacaoMarkup.totalCustosProvisoes,
+      ultimaSimulacaoMarkup.provisaoGastosFixos
+    );
   });
 
   linhasProdutos?.addEventListener("change", function (event) {
@@ -198,22 +300,12 @@
     const provisaoGastosFixos = valorCampo("provisaoGastosFixos");
     const totalCustosProvisoes = calcularTotalCustosProvisoes();
 
-    const margemBruta = precoVenda > 0
-      ? ((precoVenda - custoProduto) / precoVenda) * 100
-      : 0;
+    const margemBruta = calcularMargemBruta(precoVenda, totalCustosProvisoes, provisaoGastosFixos);
 
     const margemContribuicao = margemBruta - totalCustosProvisoes;
     const lucroLiquido = margemContribuicao - provisaoGastosFixos;
 
-    const markup = totalCustosProvisoes < 100
-      ? 100 / (100 - totalCustosProvisoes)
-      : 0;
-
-    document.getElementById("resMargemBruta").textContent = margemBruta.toFixed(2) + "%";
-    document.getElementById("resMargemContribuicao").textContent = margemContribuicao.toFixed(2) + "%";
-    document.getElementById("resLucroLiquido").textContent = lucroLiquido.toFixed(2) + "%";
-    document.getElementById("resMarkup").textContent = markup.toFixed(2);
-
+    atualizarSimulacaoMarkup(custoProduto, totalCustosProvisoes, provisaoGastosFixos);
     atualizarSemaforo(margemContribuicao, lucroLiquido);
 
   });
@@ -235,8 +327,7 @@
 
     document.getElementById("statusSemaforo").style.color = "#000";
 
-    ["resMargemBruta", "resMargemContribuicao", "resLucroLiquido", "resMarkup"]
-      .forEach(id => document.getElementById(id).textContent = "-");
+    limparSimulacaoMarkup();
 
   });
 
@@ -265,5 +356,6 @@
   }
 
   atualizarTotalProdutos();
+  limparSimulacaoMarkup();
 
 })();

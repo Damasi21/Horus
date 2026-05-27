@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Conversor | Configuracoes{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm rounded-4">
+  <div class="card-body p-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h1 class="h5 fw-bold mb-0">Conversor HTML para OFX</h1>
+    </div>
+
+    <p class="text-muted mb-4">
+      Converta a fatura detalhada do cartao Bradesco em um arquivo OFX para importacao financeira.
+    </p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} py-2" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+      {% csrf_token %}
+
+      <div class="col-12">
+        <label class="form-label">Arquivo HTML da fatura</label>
+        <input class="form-control" type="file" name="arquivo_html" accept=".html,.htm,text/html" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Ano dos lancamentos</label>
+        <input class="form-control" type="number" name="ano" value="{{ ano_padrao }}" min="2000" max="2100" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Banco</label>
+        <input class="form-control" type="text" name="banco_id" value="{{ banco_padrao }}" maxlength="20">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Conta/cartao no OFX</label>
+        <input class="form-control" type="text" name="conta_id" value="{{ conta_padrao }}" maxlength="40">
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-success" type="submit">Gerar OFX</button>
+        <a class="btn btn-outline-secondary" href="{% url 'core:index' %}">Voltar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
